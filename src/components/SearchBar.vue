@@ -1,23 +1,23 @@
 <script setup>
-import { ref } from 'vue';
-const searchQuery = ref('');
+import { ref } from "vue";
+const searchQuery = ref("");
 const buttonStatus = ref(false);
-function dismissButton(){
-  if(searchQuery.value != null){
+function dismissButton() {
+  if (searchQuery.value != null) {
     buttonStatus.value = true;
   }
 }
-function clearQuery(){
-  searchQuery.value = '';
+function clearQuery() {
+  searchQuery.value = "";
   buttonStatus.value = false;
 }
 
-function handleSearch(){
+function handleSearch() {
   alert("hello");
 }
 </script>
 <template>
-  <div class=" py-2 flex items-center relative">
+  <div class="py-2 flex items-center relative">
     <form @submit.prevent="handleSearch">
       <label for="search" class="absolute top-1/2 -translate-y-1/2 left-5"
         ><svg
@@ -35,16 +35,18 @@ function handleSearch(){
         type="text"
         v-model="searchQuery"
         @input="dismissButton"
-        class="w-full px-12 py-2 rounded-full outline-none decoration-none duration-300 focus:bg-gray-100 bg-gray-200 border-none dark:focus:bg-slate-700  dark:bg-slate-800  dark:text-gray-300 dark:placeholder:text-gray-300"
+        class="w-full px-12 py-2 rounded-full outline-none decoration-none duration-300 focus:bg-gray-100 bg-gray-200 border-none dark:focus:bg-slate-700 dark:bg-slate-800 dark:text-gray-300 dark:placeholder:text-gray-300"
         id="search"
         placeholder="Search"
       />
-      <span v-if="buttonStatus" class="p-1 bg-blue-400 rounded-full absolute right-16 top-1/2 -translate-y-1/2"
+      <span
+        v-if="buttonStatus"
+        class="p-1 bg-blue-400 rounded-full absolute right-16 top-1/2 -translate-y-1/2"
         ><svg
           @click="clearQuery"
           viewBox="0 0 15 15"
           aria-hidden="true"
-          class="w-3 h-3 fill-gray-200  r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-3xi3v6 r-1or9b2r r-5soawk"
+          class="w-3 h-3 fill-gray-200 r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-3xi3v6 r-1or9b2r r-5soawk"
         >
           <g>
             <path

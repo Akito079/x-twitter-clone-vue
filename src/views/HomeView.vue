@@ -26,11 +26,11 @@ window.onscroll = function () {
 </script>
 <template>
   <!-- main wrapper for all content -->
-  <section class="grid grid-cols-6 xl:grid-cols-7  dark:bg-[#191919]">
+  <section class="grid grid-cols-6 xl:grid-cols-4   dark:bg-[#191919]">
     <!-- mobile size navbar starts here -->
     <div
       id="navbar"
-      class="mobile:hidden col-span-12 duration-300 backdrop-blur-lg fixed w-full"
+      class="mobile:hidden col-span-6 duration-300 backdrop-blur-lg sticky top-0 w-full"
       :class="position"
     >
       <NavBar></NavBar>
@@ -39,7 +39,7 @@ window.onscroll = function () {
 
     <!-- left side navbars -->
     <div
-      class="hidden xl:col-span-2 mobile:flex justify-end sticky top-0 overflow-y-hidden h-screen ring-1 shadow-xl ring-slate-900/5 dark:ring-gray-700 px-5 dark:text-gray-300"
+      class="hidden xl:col-span-1  mobile:flex justify-end sticky top-0 overflow-y-hidden h-screen ring-1 ring-slate-900/5 dark:ring-gray-700 px-5 dark:text-gray-300"
     >
       <LeftSideBar></LeftSideBar>
     </div>
@@ -47,20 +47,20 @@ window.onscroll = function () {
 
     <!-- new feed starts here  -->
     <div
-      class="mobile:col-span-5 md:col-span-4 lg:col-span-3 xl:col-span-3 col-span-6 "
+      class="mobile:col-span-5 lg:col-span-3 xl:col-span-2 col-span-6"
     >
-      <div class="mobile:block hidden sticky top-0 w-full">
+      <div class="mobile:block hidden sticky top-0 w-full border-b-[1px] outline-none border-b-slate-900/5 dark:border-b-gray-700">
         <PostHeader></PostHeader>
       </div>
       <!-- posts start here -->
-      <div class="p-6">
+      <div class="py-1">
         <Posts />
       </div>
     </div>
     <!-- new feed ends here  -->
     <!-- right side bar -->
     <div
-      class="xl:col-span-2 col-span-2  hidden lg:block sticky top-0 h-screen overflow-y-scroll no-scrollbar ring-1 shadow-xl ring-slate-900/5 dark:ring-gray-700 "
+      class="xl:col-span-1 col-span-2  hidden lg:block sticky top-0 h-screen overflow-y-scroll no-scrollbar ring-1 ring-slate-900/5 dark:ring-gray-700 "
     >
       <RightSideBar></RightSideBar>
     </div>

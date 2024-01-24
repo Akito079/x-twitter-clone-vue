@@ -5,7 +5,7 @@ import FollowCard from './FollowCard.vue';
 import TermsServices from './TermsServices.vue';
 </script>
 <template>
-  <div class="mr-auto pl-4 max-w-[350px] flex flex-col gap-4 justify-start ">
+  <div class=" px-4 max-w-[350px] flex flex-col gap-4">
     <SearchBar></SearchBar>
     <!-- Subcribe section -->
     <div class="flex flex-col gap-1 px-3 py-2 rounded-xl bg-gray-100 duration-300 dark:bg-slate-900 dark:text-gray-200">
