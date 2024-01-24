@@ -58,7 +58,7 @@ const navLinks = [
   <div class="flex-1 h-full">
     <div v-for="navLink in navLinks" :key="navLink.id">
       <a
-        class="p-2 xl:px-3 xl:py-2 duration-300 rounded-full hover:bg-gray-300 dark:hover:bg-slate-900 inline-flex items-center gap-3"
+        class="p-2 xl:px-3 xl:py-2 duration-300 rounded-full hover:bg-gray-300 dark:hover:bg-slate-800 inline-flex items-center gap-3"
       >
         <span v-html="navLink.icon" class="w-6 h-6 dark:fill-gray-300"></span>
         <p class="hidden xl:block text-xl">{{ navLink.tags }}</p></a
@@ -66,7 +66,7 @@ const navLinks = [
     </div>
     <div class="my-2">
       <button
-        class="hidden xl:block px-20 py-4 rounded-full bg-blue-400 font-bold hover:bg-blue-500 duration-300 text-white"
+        class="hidden xl:block px-20 py-4 rounded-full bg-blue-600 font-bold hover:bg-blue-700 duration-300 text-white"
       >
         Post
       </button>

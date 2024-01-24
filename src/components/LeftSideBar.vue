@@ -10,7 +10,7 @@ import Logo from "./Logo.vue";
     </div>
     <NavLink/>
     <div
-      class="flex items-center gap-2 duration-300  hover:bg-gray-300 dark:hover:bg-slate-900 xl:px-4 xl:py-2  sm:mr-2 rounded-full"
+      class="flex items-center gap-2 my-5 duration-300  hover:bg-gray-300 dark:hover:bg-slate-800 xl:px-4 xl:py-2  sm:mr-2 rounded-full"
     >
       <div class="overflow-hidden flex justify-between items-center">
         <img src="../../../Images/minj.jpg" class="rounded-full shrink-0 w-10 h-10" alt="" />
