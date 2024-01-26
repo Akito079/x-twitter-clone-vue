@@ -51,7 +51,7 @@ const trends = [
     <div v-for="trend in trends" :key="trend.id" class="flex justify-between px-3 py-2 duration-300 hover:bg-gray-200 dark:hover:bg-slate-800">
       <div class="flex flex-col">
         <span class="text-gray-500 text-sm">Trending</span>
-        <h3 class="font-bold">{{ trend.hash }}</h3>
+        <h3 class="font-bold text-sm">{{ trend.hash }}</h3>
         <span class="text-gray-500 text-sm">{{trend.postCount + 'posts'}}</span>
       </div>
       <div class="">

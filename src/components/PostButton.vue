@@ -2,7 +2,7 @@
 
 </script>
 <template>
-  <button
+   <button
     class="block xl:hidden p-2  rounded-full bg-blue-600 text-gray-200"
   >
     <svg
@@ -18,4 +18,5 @@
       </g>
     </svg>
   </button>
+
 </template>

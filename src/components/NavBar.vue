@@ -5,7 +5,7 @@ import Theme from './Theme.vue';
 <template>
      <div class="flex items-center justify-between p-3">
       <div class="">
-        <img src="../../Images/minj.jpg" class="w-8 h-8 rounded-full" alt="">
+        <img src="../../Images/minj.jpg" class="w-8 h-8 rounded-full object-cover" alt="">
       </div>
         <Logo></Logo>
        <Theme></Theme>

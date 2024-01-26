@@ -30,9 +30,9 @@ const users = ref([
       v-for="user in users" :key="user.id"
       class="flex item-center gap-2 px-3 py-2 rounded-2xl duration-300 hover:bg-gray-200 dark:hover:bg-slate-800"
     >
-      <div>
+      <div class="shrink-0">
         <img
-          class="shrink-0 w-10 h-10 rounded-full object-cover"
+          class=" w-10 h-10 rounded-full object-cover"
           :src="user.avatar"
           alt=""
         />
