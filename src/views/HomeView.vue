@@ -26,7 +26,7 @@ window.onscroll = function () {
 <template>
   <!-- main wrapper for all content -->
   <section
-    class="flex flex-col mobile:flex-row mobile:justify-center dark:bg-[#191919]"
+    class="flex flex-col mobile:flex-row mobile:justify-center   dark:bg-[#191919]"
   >
     <!-- mobile size navbar starts here -->
     <div

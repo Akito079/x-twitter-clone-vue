@@ -1,5 +1,5 @@
 <script setup>
-import PostButton from './PostButton.vue';
+import PostButton from "./PostButton.vue";
 const navLinks = [
   {
     id: 1,
@@ -56,13 +56,14 @@ const navLinks = [
 <template>
   <!-- link tags start here -->
   <div class="flex-1 h-full">
-    <div v-for="navLink in navLinks" :key="navLink.id">
+    <div class="flex items-center" v-for="navLink in navLinks" :key="navLink.id">
       <a
         class="p-2 xl:px-3 xl:py-2 duration-300 rounded-full hover:bg-gray-300 dark:hover:bg-slate-800 flex items-center gap-3"
       >
         <span v-html="navLink.icon" class="w-6 h-6 dark:fill-gray-300"></span>
-        <p class="hidden xl:block text-xl">{{ navLink.tags }}</p></a
-      >
+        <p class="hidden xl:block text-xl">{{ navLink.tags }}</p>
+
+      </a>
     </div>
     <div class="my-2">
       <button
@@ -70,9 +71,8 @@ const navLinks = [
       >
         Post
       </button>
-      
     </div>
-    <PostButton/>
+    <PostButton />
   </div>
   <!-- Link tags end here -->
 </template>

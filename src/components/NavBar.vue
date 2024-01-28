@@ -1,12 +1,11 @@
 <script setup>
 import Logo from './Logo.vue';
 import Theme from './Theme.vue';
+import LeftDrawer from './LeftDrawer.vue';
 </script>
 <template>
      <div class="flex items-center justify-between p-3">
-      <div class="">
-        <img src="../../Images/minj.jpg" class="w-8 h-8 rounded-full object-cover" alt="">
-      </div>
+        <LeftDrawer></LeftDrawer>
         <Logo></Logo>
        <Theme></Theme>
     </div>
