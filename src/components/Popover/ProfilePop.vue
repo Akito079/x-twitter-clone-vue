@@ -13,7 +13,7 @@ onMounted(() => initFlowbite());
   >
     <div class="flex items-center shrink-0">
       <img
-        src="../../../Images/minj.jpg"
+        src="../../../public/Images/minj.jpg"
         class="rounded-full object-cover w-10 h-10"
         alt=""
       />
