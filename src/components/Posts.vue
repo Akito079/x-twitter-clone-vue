@@ -32,7 +32,7 @@ const posts = [
   >
     <!-- avatar starts -->
     <div class="shrink-0">
-      <img src="../../Images/Yujin.jpg" class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full" alt="" />
+      <img src="../../Images/Ahn yujin.jpg" class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full object-cover" alt="" />
     </div>
     <!-- avatar ends -->
     <div class="flex flex-col max-w-full gap-1 items-start">
