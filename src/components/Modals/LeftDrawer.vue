@@ -62,7 +62,7 @@ onMounted(() => {
       aria-controls="drawer-example"
     >
       <img
-        src="../../Images/minj.jpg"
+        src="../../../Images/minj.jpg"
         class="w-8 h-8 rounded-full object-cover"
         alt=""
       />
@@ -106,7 +106,7 @@ onMounted(() => {
         <!-- avatar -->
         <div class="p-1 ml-4">
           <img
-            src="../../public/Images/minj.jpg"
+            src="../../../Images/minj.jpg"
             class="w-10 h-10 rounded-full"
             alt=""
           />

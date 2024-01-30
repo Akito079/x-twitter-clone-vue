@@ -22,7 +22,9 @@ const posts = [
 ];
 </script>
 <template>
-  <PostForm />
+  <div class="hidden mobile:block py-1"> 
+    <PostForm />
+  </div>
   <div
     v-for="post in posts"
     :key="post.id"

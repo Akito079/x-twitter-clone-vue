@@ -65,13 +65,7 @@ const navLinks = [
 
       </a>
     </div>
-    <div class="my-2">
-      <button
-        class="hidden xl:block px-20 py-4 rounded-full bg-blue-600 font-bold hover:bg-blue-700 duration-300 text-white"
-      >
-        Post
-      </button>
-    </div>
+   
     <PostButton />
   </div>
   <!-- Link tags end here -->

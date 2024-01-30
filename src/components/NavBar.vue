@@ -1,7 +1,7 @@
 <script setup>
 import Logo from './Logo.vue';
 import Theme from './Theme.vue';
-import LeftDrawer from './LeftDrawer.vue';
+import LeftDrawer from './Modals/LeftDrawer.vue';
 </script>
 <template>
      <div class="flex items-center justify-between p-3">

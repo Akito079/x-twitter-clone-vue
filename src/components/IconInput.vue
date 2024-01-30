@@ -1,18 +1,19 @@
 <script setup>
-const props = defineProps(["labelIcon", "type"]);
-const emits = defineEmits(["imageFiles"]);
+import { onMounted } from 'vue';
+const props = defineProps(["labelIcon","type","inputId"]);
+const emits = defineEmits(["imageFiles",]);
 </script>
 <template>
   <div class="">
-    <label for="imageInput" v-html="props.labelIcon"></label>
+    <label :for="props.inputId" v-html="props.labelIcon"></label>
     <input
       :type="props.type"
-      @change="emits('imageFiles', $event.target.files)"
+      @change="emits('imageFiles',$event.target.files)"
       multiple
       accept="images/*"
       name=""
       class="hidden"
-      id="imageInput"
+      :id="props.inputId"
     />
   </div>
 </template>

@@ -31,6 +31,5 @@ import Logo from "./Logo.vue";
       </div>
     </div>
   </div>
-
   <!-- nav link wrapper ends -->
 </template>

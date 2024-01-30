@@ -3,7 +3,7 @@ import Theme from "./Theme.vue";
 </script>
 <template>
   <div
-    class="mobile:block hidden sticky top-0 w-full border-b-[1px] outline-none border-b-slate-900/5 dark:border-b-gray-700"
+    class="mobile:block hidden sticky top-0 w-full border-b-[1px] outline-none z-50 border-b-slate-900/5 dark:border-b-gray-700"
   >
     <div class="grid grid-cols-5 backdrop-blur-lg dark:text-gray-400">
       <div
