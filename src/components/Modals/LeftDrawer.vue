@@ -62,7 +62,7 @@ onMounted(() => {
       aria-controls="drawer-example"
     >
       <img
-        src="../../../Images/minj.jpg"
+        src="../../../public/Images/minj.jpg"
         class="w-8 h-8 rounded-full object-cover"
         alt=""
       />
@@ -73,7 +73,7 @@ onMounted(() => {
   <Teleport to="body">
     <div
       id="drawer-example"
-      class="fixed top-0 left-0 z-40 h-screen  overflow-y-auto transition-transform -translate-x-full bg-white w-80 dark:bg-gray-800"
+      class="fixed top-0 left-0 z-40 h-screen overflow-y-auto transition-transform -translate-x-full bg-white w-80 dark:bg-gray-800"
       tabindex="-1"
       aria-labelledby="drawer-label"
     >
@@ -102,7 +102,7 @@ onMounted(() => {
         <span class="sr-only">Close menu</span>
       </button>
       <!-- dismiss modal button ends -->
-      <div class="flex flex-col  gap-3">
+      <div class="flex flex-col gap-3">
         <!-- avatar -->
         <div class="p-1 ml-4">
           <img
@@ -120,13 +120,19 @@ onMounted(() => {
         <!-- username end -->
         <!-- followrings and follwers -->
         <div class="flex px-4 items-center gap-5">
-          <div class="text-gray-500 dark:text-gray-300"><b>53</b> Followings</div>
+          <div class="text-gray-500 dark:text-gray-300">
+            <b>53</b> Followings
+          </div>
           <div class="text-gray-500 dark:text-gray-300"><b>5</b> follwers</div>
         </div>
         <!-- followrings and follwers ends-->
         <!-- nav links -->
-        <div class="flex flex-col ">
-          <a v-for="link in links" :key="link.id" class="flex gap-2  px-4 py-4 items-center hover:bg-gray-300 dark:hover:bg-slate-700 duration-300">
+        <div class="flex flex-col">
+          <a
+            v-for="link in links"
+            :key="link.id"
+            class="flex gap-2 px-4 py-4 items-center hover:bg-gray-300 dark:hover:bg-slate-700 duration-300"
+          >
             <span class="" v-html="link.icon"></span>
             <span class="dark:text-gray-300">{{ link.tag }}</span>
           </a>
