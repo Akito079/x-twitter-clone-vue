@@ -16,8 +16,7 @@ const posts = [
     image: [
       "../../Images/minj.jpg",
       "../../Images/sakura.jpg",
-      "../../Images/Yujin.jpg",
-      "../../public/Images/Ahn yujin.jpg"
+      "../../Images/Ahn yujin.jpg",
     ],
   },
 ];
@@ -62,7 +61,6 @@ const posts = [
         </div>
       </div>
       <!-- images end here -->
-
       <!-- reaction button starts here -->
       <PostReaction></PostReaction>
       <!-- reaction button ends here -->
