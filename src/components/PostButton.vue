@@ -24,7 +24,7 @@ function previewImage(payload){
     imgUrl.value.push(URL.createObjectURL(imageFiles[i]));
   }
   if (imgUrl.value.length == 1) {
-    imgContainer.value = 'mobile:w-[400px] h-[250px]';
+    imgContainer.value = 'mobile:w-[400px]';
     gridCols.value = "grid-cols-1";
     imgRatio.value = "";
   } else if (imgUrl.value.length > 1) {
@@ -76,12 +76,12 @@ onMounted(() => initFlowbite());
       id="default-modal"
       tabindex="-1"
       aria-hidden="true"
-      class="hidden overflow-y-auto overflow-x-hidden fixed  top-0 right-0 left-0 z-50 justify-center items-center w-full  h-[calc(100%-1rem)] max-h-full"
+      class="hidden overflow-y-auto overflow-x-hidden fixed  top-0 right-0 left-0 z-50 justify-center items-center w-full  h-screen mobile:h-full max-h-full"
     >
       <div class="relative p-4 w-full max-w-2xl max-h-full">
         <!-- Modal content -->
         <div
-          class="relative h-screen mobile:h-full bg-white rounded-lg shadow dark:bg-black"
+          class="relative bg-white rounded-lg shadow dark:bg-black"
         >
         <!-- dissmisss button -->
           <button

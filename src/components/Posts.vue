@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import PostForm from "./PostForm.vue";
 import PostReaction from "./PostReaction.vue";
-
+const imageClass = ref('');
 const posts = [
   {
     id: 1,
@@ -17,6 +17,7 @@ const posts = [
       "../../Images/minj.jpg",
       "../../Images/sakura.jpg",
       "../../Images/Yujin.jpg",
+      "../../public/Images/Ahn yujin.jpg"
     ],
   },
 ];
@@ -52,12 +53,12 @@ const posts = [
       </div>
       <!-- content ends here -->
       <!-- images start here -->
-      <div class="grid grid-cols-2 rounded-2xl overflow-hidden">
+      <div class="grid grid-cols-2  rounded-2xl overflow-hidden">
         <div
           v-for="image in post.image"
-          :class="[post.image.length == 1 ? 'col-span-2' : 'col-span-1']"
+          :class="[post.image.length == 1 ? 'col-span-2 ' : 'col-span-1 ']"
         >
-          <img :src="image" class="w-full object-cover" alt="" />
+          <img :src="image" :class="[post.image.length == 1 ? 'w-full  object-cover' : 'w-full object-cover aspect-square']" alt="" />
         </div>
       </div>
       <!-- images end here -->
