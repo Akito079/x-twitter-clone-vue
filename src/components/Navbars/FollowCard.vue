@@ -5,19 +5,19 @@ const users = ref([
     id : 1,
     name : 'AhnYujin',
     nickName : '@yujin_an',
-    avatar : '../../Images/Yujin.jpg',
+    avatar : '../../public/Images/Yujin.jpg',
   },
   {
     id : 2,
     name : 'Minji',
     nickName : '@gominji',
-    avatar : '../../Images/minj.jpg',
+    avatar : '../../public/Images/minj.jpg',
   },
   {
     id : 3,
     name : 'Sakura Miyawaki',
     nickName : '@saku_chan',
-    avatar : '../../Images/sakura.jpg',
+    avatar : '../../public/Images/sakura.jpg',
   },
 ]);
 </script>

@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from "vue";
-import LeftSideBar from "@/components/LeftSideBar.vue";
-import RightSideBar from "@/components/RightSideBar.vue";
-import NavBar from "@/components/NavBar.vue";
-import FooterNav from "@/components/FooterNav.vue";
-import PostHeader from "@/components/PostHeader.vue";
-import Posts from "@/components/Posts.vue";
-import PostButton from "@/components/PostButton.vue";
+import LeftSideBar from "@/components/Navbars/LeftSideBar.vue";
+import RightSideBar from "@/components/Navbars/RightSideBar.vue";
+import NavBar from "@/components/Navbars/NavBar.vue";
+import FooterNav from "@/components/Navbars/FooterNav.vue";
+import PostHeader from "@/components/Posts/PostHeader.vue";
+import Posts from "@/components/Posts/Posts.vue";
+import PostButton from "@/components/Posts/PostButton.vue";
 //mobile responsive effects
 const position = ref("");
 const contrast = ref("");

@@ -1,5 +1,5 @@
 <script setup>
-import Theme from "./Theme.vue";
+import Theme from '../Theme.vue';
 </script>
 <template>
   <div

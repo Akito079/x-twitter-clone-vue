@@ -106,7 +106,7 @@ onMounted(() => {
         <!-- avatar -->
         <div class="p-1 ml-4">
           <img
-            src="../../../Images/minj.jpg"
+            src="../../../public/Images/minj.jpg"
             class="w-10 h-10 rounded-full"
             alt=""
           />

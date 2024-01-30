@@ -17,6 +17,7 @@ const posts = [
       "../../Images/minj.jpg",
       "../../Images/sakura.jpg",
       "../../Images/Ahn yujin.jpg",
+      "../../Images/yujinicecream.jpg"
     ],
   },
 ];
@@ -32,7 +33,7 @@ const posts = [
   >
     <!-- avatar starts -->
     <div class="shrink-0">
-      <img src="../../Images/Ahn yujin.jpg" class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full object-cover" alt="" />
+      <img src="../../../public/Images/Ahn yujin.jpg" class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full object-cover" alt="" />
     </div>
     <!-- avatar ends -->
     <div class="flex flex-col max-w-full gap-1 items-start">

@@ -1,5 +1,5 @@
 <script setup>
-import PostButton from "./PostButton.vue";
+import PostButton from '../Posts/PostButton.vue';
 const navLinks = [
   {
     id: 1,

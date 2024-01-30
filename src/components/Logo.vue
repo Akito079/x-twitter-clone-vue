@@ -1,9 +1,12 @@
+<script setup>
+const props = defineProps({size : String,hoverStatus : Boolean});
+</script>
 <template>
-  <div class=" rounded-full p-2  hover:bg-gray-300 dark:hover:bg-slate-700 duration-300">
+  <div :class="['rounded-full p-2',props.hoverStatus ? 'hover:bg-gray-300 dark:hover:bg-slate-700 duration-300' : '']">
     <svg
       viewBox="0 0 24 24"
       aria-hidden="true"
-      class="w-6 h-6 dark:fill-gray-300 r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-lrsllp r-18jsvk2 r-16y2uox r-8kz0gk"
+      :class="['dark:fill-gray-300 r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-lrsllp r-18jsvk2 r-16y2uox r-8kz0gk',props.size]"
     >
       <g>
         <path

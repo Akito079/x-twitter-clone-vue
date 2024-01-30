@@ -1,12 +1,12 @@
 <script setup>
-import Logo from './Logo.vue';
-import Theme from './Theme.vue';
-import LeftDrawer from './Modals/LeftDrawer.vue';
+import Logo from '../Logo.vue';
+import Theme from '../Theme.vue';
+import LeftDrawer from '../Modals/LeftDrawer.vue';
 </script>
 <template>
      <div class="flex items-center justify-between p-3">
         <LeftDrawer></LeftDrawer>
-        <Logo></Logo>
+        <Logo size="w-6 h-6"></Logo>
        <Theme></Theme>
     </div>
     <div class="grid grid-cols-2 dark:text-gray-300">
