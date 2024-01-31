@@ -11,6 +11,7 @@ export default {
       fontFamily :{
         "open-san" : [ 'Open Sans', "sans-serif"],
         "roboto" : ['Roboto', 'sans-serif'],
+        "teko" : ['Teko', 'sans-serif']
       },
     },
     screens : {

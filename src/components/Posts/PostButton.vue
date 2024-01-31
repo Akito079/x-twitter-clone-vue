@@ -124,7 +124,7 @@ onMounted(() => initFlowbite());
               <!-- text area -->
               <textarea
                 rows="2"
-                class="resize-none py-2 border-none bg-white focus:ring-white placeholder:text-lg text-lg dark:text-gray-300 no-scrollbar dark:bg-black dark:focus:ring-black"
+                class="w-full  resize-none py-2 border-none bg-white focus:ring-white placeholder:text-lg text-lg dark:text-gray-300 no-scrollbar dark:bg-black dark:focus:ring-black"
                 placeholder="What is happening?!"
               ></textarea>
               <!-- text area ends -->
