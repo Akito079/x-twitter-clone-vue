@@ -1,7 +1,28 @@
 <script setup>
-import { onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { initFlowbite } from "flowbite";
-onMounted(() => initFlowbite());
+import { useAuthStore } from "@/stores/auth";
+import axios from "axios";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const authStore = useAuthStore();
+const user = ref([]);
+const handleLogout = async () => {
+  try {
+    await authStore.signOut();
+    localStorage.removeItem("token");
+    router.push("/login");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+onMounted(async () => {
+  initFlowbite();
+  user.value = await authStore.getAuthUser();
+  console.log(user.value);
+});
 </script>
 <template>
   <!-- popover button -->
@@ -19,8 +40,10 @@ onMounted(() => initFlowbite());
       />
     </div>
     <div class="hidden xl:flex flex-col">
-      <span>Sora Kotaro</span>
-      <span class="text-slate-700 dark:text-gray-300">@SoraKotaro2</span>
+      <span>{{ user.name }}</span>
+      <span class="text-slate-700 dark:text-gray-300"
+        >@{{ user.nickName }}</span
+      >
     </div>
     <div class="hidden xl:block ml-5">
       <i class="fa-solid fa-ellipsis"></i>
@@ -35,8 +58,15 @@ onMounted(() => initFlowbite());
     class="absolute z-10 invisible inline-block w-[200px] text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
   >
     <div class="flex flex-col items-start">
-      <button class="font-bold text-black dark:text-gray-300 p-4">Add an existing account</button>
-      <button class="font-bold text-black dark:text-gray-300 p-4">Log out @SoraKotaro2</button>
+      <button class="font-bold text-black dark:text-gray-300 p-4">
+        Add an existing account
+      </button>
+      <button
+        @click="handleLogout"
+        class="font-bold text-black dark:text-gray-300 p-4"
+      >
+        Log out @{{ user.nickName }}
+      </button>
     </div>
     <div data-popper-arrow></div>
   </div>

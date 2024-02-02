@@ -1,17 +1,67 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { initFlowbite } from "flowbite";
+import { ref, onMounted, computed } from "vue";
+import { initFlowbite, Modal } from "flowbite";
 import FloatingInput from "./FloatingInput.vue";
 import Logo from "../Logo.vue";
 import Google from "./Google.vue";
 import Github from "./Github.vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { useVuelidate } from "@vuelidate/core";
+import {
+  required,
+  minLength,
+  maxLength,
+  email,
+  helpers,
+} from "@vuelidate/validators";
+
+const authStore = useAuthStore();
+const serverMessages = ref(null);
+const router = useRouter();
 const form = ref({
   email: "",
   password: "",
 });
+const rules = computed(() => {
+  return {
+    email: {
+      required: helpers.withMessage(
+        "Please enter your email address",
+        required
+      ),
+      email: helpers.withMessage("Please enter a valid email address", email),
+    },
+    password: {
+      required: helpers.withMessage("Please enter the password", required),
+      minLength: helpers.withMessage(
+        "A password must contain atleast 6 characters",
+        minLength(6)
+      ),
+      maxLength: helpers.withMessage(
+        "A password must contain 12 characters at most",
+        maxLength(12)
+      ),
+    },
+  };
+});
 
-const handleLogin = () => {
-  console.log(form.value);
+const v$ = useVuelidate(rules, form.value);
+
+const handleLogin = async () => {
+  const result = await v$.value.$validate();
+  if (result) {
+    try {
+      await authStore.signIn(form.value);
+      const modalElement = document.querySelector("#sign-in-modal");
+      const modal = new Modal(modalElement);
+      modal.hide();
+      router.push("/");
+    } catch (error) {
+      serverMessages.value = error.response.data.message;
+      console.log(error);
+    }
+  }
 };
 
 onMounted(() => initFlowbite());
@@ -40,7 +90,7 @@ onMounted(() => initFlowbite());
         <div class="relative bg-white rounded-lg shadow dark:bg-slate-900">
           <button
             type="button"
-            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="sign-in-modal"
           >
             <svg
@@ -69,19 +119,45 @@ onMounted(() => initFlowbite());
               <h3 class="font-bold text-2xl">Sign in to X</h3>
               <Google></Google>
               <Github></Github>
-              <FloatingInput
-                label="Email"
-                type="email"
-                input-id="siginEmail"
-                v-model:modal-value="form.email"
-              ></FloatingInput>
 
-              <FloatingInput
-                label="Password"
-                type="password"
-                input-id="signinPassword"
-                v-model:modal-value="form.password"
-              ></FloatingInput>
+              <!-- showing message from server -->
+              <p
+                v-if="serverMessages != null"
+                class="px-5 py-2 text-red-500 rounded-lg bg-gray-200 dark:bg-slate-900"
+              >
+                {{ serverMessages }}
+              </p>
+              <div>
+                <FloatingInput
+                  label="Email"
+                  type="email"
+                  input-id="siginEmail"
+                  v-model:modal-value="form.email"
+                ></FloatingInput>
+                <span
+                  v-if="v$.email.$errors"
+                  v-for="error in v$.email.$errors"
+                  :key="error.$uid"
+                  class="text-sm text-red-500"
+                  >{{ error.$message }}
+                </span>
+              </div>
+
+              <div>
+                <FloatingInput
+                  label="Password"
+                  type="password"
+                  input-id="signinPassword"
+                  v-model:modal-value="form.password"
+                ></FloatingInput>
+                <span
+                  v-if="v$.password.$errors"
+                  v-for="error in v$.password.$errors"
+                  :key="error.$uid"
+                  class="text-sm text-red-500"
+                  >{{ error.$message }}
+                </span>
+              </div>
 
               <div class="flex justify-center">
                 <button
@@ -99,7 +175,9 @@ onMounted(() => initFlowbite());
                 </button>
               </div>
               <div class="flex justify-center">
-                <span class="dark:text-gray-300">Don't have an account yet <a class="text-blue-500">Sign up</a></span>
+                <button class="dark:text-gray-300">
+                  Don't have an account yet <a class="text-blue-500">Sign up</a>
+                </button>
               </div>
             </form>
           </div>
