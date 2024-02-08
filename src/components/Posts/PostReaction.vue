@@ -1,5 +1,48 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import axios from "axios";
+const props = defineProps({
+  postId: Number,
+  userId: Number,
+  commentCount: Number,
+  repostCount: Number,
+  reactionCount: Number,
+  viewCount: Number,
+  reactStatus: Boolean,
+});
+const reaction = ref(0);
+const hasReacted = ref(false);
+const repost = ref(0);
+const hasRepost = ref(false);
+const comment = ref(0);
+const hasComment = ref(false);
+
+// toggle reaction
+const react = async () => {
+  const token = localStorage.getItem("token");
+  const header = {
+    Authorization: `Bearer ${token}`,
+  };
+  const response = await axios.post(
+    "http://localhost:8000/api/reactions",
+    { postId: props.postId },
+    { headers: header }
+  );
+  if (response.data.message === "You have  reacted to a post") {
+    reaction.value++;
+    hasReacted.value = true;
+  } else {
+    reaction.value--;
+    hasReacted.value = false;
+  }
+};
+
+onMounted(() => {
+  reaction.value = props.reactionCount;
+  hasReacted.value = props.reactStatus;
+  repost.value = props.repostCount;
+  comment.value = props.commentCount;
+});
 </script>
 <template>
   <div class="grid grid-cols-10 w-full">
@@ -9,7 +52,7 @@ import { ref } from "vue";
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"
-          class="w-5 h-5 group-hover:fill-blue-500  dark:fill-gray-300"
+          class="w-5 h-5 group-hover:fill-blue-500 dark:fill-gray-300"
         >
           <g>
             <path
@@ -18,12 +61,12 @@ import { ref } from "vue";
           </g>
         </svg>
       </div>
-      <span>10</span>
+      <span class="dark:text-gray-300">{{ props.commentCount }}</span>
     </div>
     <!-- comment ends -->
     <!-- repost -->
     <div class="col-span-2 group flex items-center">
-      <div class="rounded-full p-1 duration-300  group-hover:bg-emerald-400/20">
+      <div class="rounded-full p-1 duration-300 group-hover:bg-emerald-400/20">
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"
@@ -36,16 +79,17 @@ import { ref } from "vue";
           </g>
         </svg>
       </div>
-      <span>10</span>
+      <span class="dark:text-gray-300">0</span>
     </div>
     <!-- repost ends -->
     <!-- love -->
-    <div class="col-span-2 group flex items-center">
+    <div @click="react" class="col-span-2 select-none group flex items-center">
       <div class="rounded-full p-1 duration-300 group-hover:bg-red-400/20">
         <svg
+          v-if="!hasReacted"
           viewBox="0 0 24 24"
           aria-hidden="true"
-          class="w-5 h-5 group-hover:fill-red-500  dark:fill-gray-300"
+          class="w-5 h-5 group-hover:fill-red-500 dark:fill-gray-300"
         >
           <g>
             <path
@@ -53,8 +97,21 @@ import { ref } from "vue";
             ></path>
           </g>
         </svg>
+
+        <svg
+          v-else
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          class="animate__bounceIn w-5 h-5 group-hover:fill-red-500 fill-red-500"
+        >
+          <g>
+            <path
+              d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"
+            ></path>
+          </g>
+        </svg>
       </div>
-      <span>10</span>
+      <span class="dark:text-gray-300">{{ reaction }}</span>
     </div>
     <!-- love ends -->
     <!-- view  -->
@@ -72,7 +129,7 @@ import { ref } from "vue";
           </g>
         </svg>
       </div>
-      <span>10</span>
+      <span class="dark:text-gray-300">{{ props.viewCount }}</span>
     </div>
     <!-- view ends -->
     <!-- bookmark -->
@@ -90,7 +147,7 @@ import { ref } from "vue";
           </g>
         </svg>
       </div>
-      <div class="rounded-full p-1 duration-300 hover:bg-blue-400/20"> 
+      <div class="rounded-full p-1 duration-300 hover:bg-blue-400/20">
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"

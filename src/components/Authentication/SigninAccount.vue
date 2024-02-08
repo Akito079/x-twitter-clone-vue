@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, computed } from "vue";
 import { initFlowbite, Modal } from "flowbite";
 import FloatingInput from "./FloatingInput.vue";
 import Logo from "../Logo.vue";
@@ -64,7 +64,7 @@ const handleLogin = async () => {
   }
 };
 
-onMounted(() => initFlowbite());
+
 </script>
 <template>
   <!-- modal button -->

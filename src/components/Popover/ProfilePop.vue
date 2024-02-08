@@ -4,13 +4,15 @@ import { initFlowbite } from "flowbite";
 import { useAuthStore } from "@/stores/auth";
 import axios from "axios";
 import { useRouter } from "vue-router";
-
+import { usePostStore } from "@/stores/posts";
 const router = useRouter();
 const authStore = useAuthStore();
+const postStore = usePostStore();
 const user = ref([]);
 const handleLogout = async () => {
   try {
     await authStore.signOut();
+    postStore.emptyPosts();
     localStorage.removeItem("token");
     router.push("/login");
   } catch (error) {
@@ -19,9 +21,8 @@ const handleLogout = async () => {
 };
 
 onMounted(async () => {
-  initFlowbite();
-  user.value = await authStore.getAuthUser();
-  console.log(user.value);
+  await authStore.authUser();
+  user.value = authStore.getAuthUser;
 });
 </script>
 <template>

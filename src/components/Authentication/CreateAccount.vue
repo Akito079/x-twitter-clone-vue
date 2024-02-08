@@ -83,6 +83,9 @@ const handleRegister = async () => {
       await authStore.signUp(form.value);
       serverMessages.value = ["Registeration is successful"];
       serverClass.value = "text-emerald-500";
+      const modalElement = document.querySelector("#create-account-modal");
+      const modal = new Modal(modalElement);
+      modal.hide();
     } catch (error) {
       console.log(error);
       serverMessages.value = error.response.data.errors;
@@ -91,7 +94,6 @@ const handleRegister = async () => {
   }
 };
 
-onMounted(() => initFlowbite());
 </script>
 <template>
   <!-- modal button -->
