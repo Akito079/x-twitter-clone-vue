@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { initFlowbite } from "flowbite";
+import { initFlowbite, Modal } from "flowbite";
 import Logo from "../Logo.vue";
 import FloatingInput from "@/components/Authentication/FloatingInput.vue";
 import { useAuthStore } from "@/stores/auth";
@@ -21,6 +21,7 @@ const form = ref({
   name: "",
   nickName: "",
   email: "",
+  profileImage: "",
   password: "",
   passwordConfirm: "",
 });
@@ -53,6 +54,12 @@ const rules = computed(() => {
       required: helpers.withMessage("An email is required", required),
       email: helpers.withMessage("The email must be a valid email", email),
     },
+    profileImage: {
+      required: helpers.withMessage(
+        "Please choose a profile picture",
+        required
+      ),
+    },
     password: {
       required: helpers.withMessage("An password is required", required),
       minLength: helpers.withMessage(
@@ -76,6 +83,11 @@ const rules = computed(() => {
 
 const v$ = useVuelidate(rules, form.value);
 
+const uploadProfileImage = (event) => {
+  const files = event.target.files[0];
+  form.value.profileImage = files;
+};
+
 const handleRegister = async () => {
   const result = await v$.value.$validate();
   if (result) {
@@ -93,7 +105,6 @@ const handleRegister = async () => {
     }
   }
 };
-
 </script>
 <template>
   <!-- modal button -->
@@ -162,6 +173,15 @@ const handleRegister = async () => {
                 {{ serverMessage }}
               </p>
               <!-- form inputs -->
+              <!-- profile picture -->
+              <input
+                @change="uploadProfileImage"
+                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                aria-describedby="user_avatar_help"
+                id="user_avatar"
+                accept="image/png, image/jpg, image/jpeg,image/webp"
+                type="file"
+              />
               <div>
                 <FloatingInput
                   label="Name"

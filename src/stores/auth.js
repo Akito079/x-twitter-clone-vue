@@ -15,8 +15,11 @@ export const useAuthStore = defineStore("auth", () => {
     localStorage.setItem("token", token.value);
   }
   async function signUp(payload) {
+    const header = {
+      "Content-Type": "multipart/form-data",
+    }
     await axios.get('http://localhost:8000/sanctum/csrf-cookie');
-    await axios.post("http://localhost:8000/api/register", payload);
+    await axios.post("http://localhost:8000/api/register", payload,{headers:header});
   }
   async function signOut() {
     token.value = localStorage.getItem('token');

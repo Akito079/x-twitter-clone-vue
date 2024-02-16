@@ -4,7 +4,6 @@ import GoogleVue from "@/components/Authentication/Google.vue";
 import Github from "@/components/Authentication/Github.vue";
 import CreateAccount from "@/components/Authentication/CreateAccount.vue";
 import SigninAccount from "@/components/Authentication/SigninAccount.vue";
-import Theme from "@/components/Theme.vue";
 </script>
 <template>
   <div class="flex flex-col  lg:flex-row items-center justify-center gap-5 lg:gap-32 w-full h-screen my-20 sm:my-0 dark:bg-black">

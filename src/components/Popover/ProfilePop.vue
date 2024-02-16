@@ -8,6 +8,7 @@ import { usePostStore } from "@/stores/posts";
 const router = useRouter();
 const authStore = useAuthStore();
 const postStore = usePostStore();
+const avatar = ref("");
 const user = ref([]);
 const handleLogout = async () => {
   try {
@@ -23,6 +24,7 @@ const handleLogout = async () => {
 onMounted(async () => {
   await authStore.authUser();
   user.value = authStore.getAuthUser;
+  avatar.value = `http://localhost:8000/profileImages/${user.value.profileImage}`;
 });
 </script>
 <template>
@@ -34,11 +36,7 @@ onMounted(async () => {
     class="flex items-center gap-1 my-5 duration-300 hover:bg-gray-300 dark:hover:bg-slate-800 xl:px-4 xl:py-2 rounded-full"
   >
     <div class="flex items-center shrink-0">
-      <img
-        src="../../../public/Images/minj.jpg"
-        class="rounded-full object-cover w-10 h-10"
-        alt=""
-      />
+      <img :src="avatar" class="rounded-full object-cover w-10 h-10" alt="" />
     </div>
     <div class="hidden xl:flex flex-col">
       <span>{{ user.name }}</span>

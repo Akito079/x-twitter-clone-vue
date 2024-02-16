@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import axios from "axios";
+import PostDetail from "./PostDetail.vue";
 const props = defineProps({
   postId: Number,
   userId: Number,
@@ -10,12 +12,19 @@ const props = defineProps({
   viewCount: Number,
   reactStatus: Boolean,
 });
+const router = useRouter();
 const reaction = ref(0);
 const hasReacted = ref(false);
 const repost = ref(0);
 const hasRepost = ref(false);
 const comment = ref(0);
-const hasComment = ref(false);
+
+const viewPost = () => {
+  router.push({
+    name: "postDetail",
+    params: { postId: props.postId },
+  });
+};
 
 // toggle reaction
 const react = async () => {
@@ -45,9 +54,9 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="grid grid-cols-10 w-full">
+  <div class="grid  grid-cols-12 w-full">
     <!-- comment  -->
-    <div class="col-span-2 group flex items-center">
+    <div @click="viewPost" class="col-span-2 group flex items-center">
       <div class="rounded-full p-1 duration-300 group-hover:bg-blue-400/20">
         <svg
           viewBox="0 0 24 24"
@@ -138,7 +147,7 @@ onMounted(() => {
         <svg
           viewBox="0 0 24 24"
           aria-hidden="true"
-          class="w-5 h-5 hover:fill-blue-500 dark:gray-300 r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
+          class="w-5 h-5 dark:fill-gray-300 hover:fill-blue-500 dark:gray-300 r-4qtqp9 r-yyyyoo r-dnmrzs r-bnwqim r-1plcrui r-lrvibr r-1xvli5t r-1hdv0qi"
         >
           <g>
             <path
@@ -147,6 +156,10 @@ onMounted(() => {
           </g>
         </svg>
       </div>
+    </div>
+    <!-- bookmark ends -->
+    <!-- share -->
+    <div class="col-span-2 flex items-center">
       <div class="rounded-full p-1 duration-300 hover:bg-blue-400/20">
         <svg
           viewBox="0 0 24 24"
@@ -161,6 +174,5 @@ onMounted(() => {
         </svg>
       </div>
     </div>
-    <!-- bookmark ends -->
   </div>
 </template>

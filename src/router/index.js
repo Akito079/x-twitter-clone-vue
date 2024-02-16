@@ -16,6 +16,12 @@ const router = createRouter({
       component: () => import('../views/Login.vue'),
       meta: { requiresAuth: false },
     },
+    {
+      path: '/posts/:postId',
+      name: 'postDetail',
+      component: () => import('../views/PostView.vue'),
+      meta: { requiresAuth: true },
+    },
   ]
 })
 router.beforeEach((to)=>{

@@ -46,6 +46,28 @@ export const usePostStore = defineStore("posts", () => {
     });
   }
 
+  // get specific post
+  async function getPostDetail(postId) {
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    token.value = localStorage.getItem("token");
+    const header = {
+      Authorization: `Bearer ${token.value}`,
+    };
+    const response = await axios.get(`http://localhost:8000/api/posts/${postId}?includeComments=true`,{headers:header});
+    posts.value = response.data.posts;
+  }
+
+  //update post
+  async function postUpdate(postId,payload){
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+    token.value = localStorage.getItem('token');
+    const header = {
+      Authorization : `Bearer ${token.value}`,
+      "Content-Type": "multipart/form-data",
+    } 
+    await axios.post(`http://localhost:8000/api/posts/${postId}?_method=PUT`,payload,{headers:header})
+  }
+
   //empty posts
   function emptyPosts() {
     posts.value = null;
@@ -57,6 +79,8 @@ export const usePostStore = defineStore("posts", () => {
     postsIndex,
     postDestroy,
     getPosts,
+    getPostDetail,
+    postUpdate,
     emptyPosts,
   };
 });

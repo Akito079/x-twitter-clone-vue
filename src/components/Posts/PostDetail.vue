@@ -1,10 +1,13 @@
 <script setup>
-import { ref, onMounted, onUpdated, watch } from "vue";
+import EditPostModal from "./EditPostModal.vue";
+import { ref, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import PostReaction from "./PostReaction.vue";
+import Comment from "./Comment.vue";
 import { usePostStore } from "@/stores/posts";
 import { Dropdown } from "flowbite";
 import { useAuthStore } from "@/stores/auth";
+import Swal from "sweetalert2";
 const posts = ref([]);
 const user = ref([]);
 const router = useRouter();
@@ -12,8 +15,7 @@ const watchProp = ref(false);
 const postStore = usePostStore();
 const userStore = useAuthStore();
 const dropdownStatus = ref(false);
-const props = defineProps({ reloadPosts: Boolean });
-const emits = defineEmits(["changeUpdateStatus"]);
+const props = defineProps(["postId"]);
 
 // create custom dropdown
 const handleDropdown = (postId, menuId) => {
@@ -28,79 +30,71 @@ const handleDropdown = (postId, menuId) => {
   }
 };
 
-// show posts from server asynchronously
-const newfeed = async () => {
-  await postStore.postsIndex();
-  posts.value = postStore.getPosts;
-};
-
-// after creating new posts the new posts will be shown on the page without reload
-const handleNewpostEvent = async () => {
-  if (watchProp.value === true) {
-    await postStore.postsIndex();
-    posts.value = postStore.getPosts;
-    emits("changeUpdateStatus", false);
-  }
-};
-
-//delete posts
-const handlePostdelete = async (postId) => {
-  await postStore.postDestroy(postId);
-  watchProp.value = true;
-};
-
-const viewPost = (postId) => {
-  router.push({
-    name: "postDetail",
-    params: { postId: postId },
+const deletePost = () => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "rgb(28 100 242)",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Deleted!",
+        text: "Your file has been deleted.",
+        confirmButtonColor: "rgb(28 100 242)",
+        icon: "success",
+      });
+      await postStore.postDestroy(posts.value.id);
+      posts.value = [];
+      router.push("/");
+    }
   });
 };
 
 onMounted(async () => {
+  await postStore.getPostDetail(props.postId);
+  posts.value = postStore.getPosts;
   await userStore.authUser();
   user.value = userStore.getAuthUser;
 });
 
-onUpdated(() => {
-  watchProp.value = props.reloadPosts;
+watch(watchProp, async () => {
+  if (watchProp.value === true) {
+    await postStore.getPostDetail(props.postId);
+    posts.value = postStore.getPosts;
+    watchProp.value = false;
+  }
 });
-
-watch(
-  watchProp,
-  async () => {
-    await handleNewpostEvent();
-  },
-  { immediate: true }
-);
-
-await newfeed();
 </script>
 <template>
   <div
     v-if="posts.length != 0"
-    v-for="post in posts"
-    :key="post.id"
-    class="flex gap-3 py-3 px-3 mobile:px-8 hover:bg-gray-100 border-[1px] border-slate-900/5 dark:border-[1px] dark:border-gray-700 dark:hover:bg-slate-900 duration-300"
+    class="flex gap-3 py-3 px-3 mobile:px-8 border-[1px] border-slate-900/5 dark:border-[1px] dark:border-gray-700 duration-300"
   >
-    <!-- avatar starts -->
-    <div class="shrink-0">
-      <img
-        :src="'http://localhost:8000/profileImages/' + post.userProfile"
-        class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full object-cover"
-        alt=""
-      />
-    </div>
-    <!-- avatar ends -->
     <div class="flex flex-col w-full gap-1 items-start">
       <!-- user name -->
       <div class="flex items-start gap-2 w-full">
-        <h3 class="font-bold dark:text-white">{{ post.userName }}</h3>
-        <span class="text-gray-500">{{ "@" + post.userNickname }}</span>
+        <!-- avatar starts -->
+        <div class="shrink-0">
+          <img
+            src="../../../public/Images/Ahn yujin.jpg"
+            class="w-8 mobile:w-10 h-8 mobile:h-10 rounded-full object-cover"
+            alt=""
+          />
+        </div>
+        <!-- avatar ends -->
+        <div class="flex flex-col">
+          <h3 class="font-bold dark:text-white">{{ posts.userName }}</h3>
+          <span class="text-gray-500">@{{ posts.userNickname }}</span>
+        </div>
         <!-- drop down -->
         <div class="ml-auto">
           <button
-            :id="post.id"
-            @click="handleDropdown(post.id, 'menu' + post.id)"
+            :id="posts.id"
+            @click="handleDropdown(posts.id, 'menu' + posts.id)"
             class="dropdownDefaultButton hover:bg-blue-200 focus:outline-none font-medium rounded-full p-2 text-center inline-flex items-center dark:hover:bg-blue-700"
             type="button"
           >
@@ -121,7 +115,7 @@ await newfeed();
 
           <!-- Dropdown menu -->
           <div
-            :id="'menu' + post.id"
+            :id="'menu' + posts.id"
             class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-slate-800"
           >
             <ul class="py-2 text-gray-700 dark:text-gray-200">
@@ -138,7 +132,7 @@ await newfeed();
                         d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"
                       ></path>
                     </g></svg
-                  >{{ "Unfollow @" + post.userNickname }}</a
+                  >Unfollow @{{ posts.userNickname }}</a
                 >
               </li>
               <li>
@@ -159,32 +153,19 @@ await newfeed();
                   View post engagement</a
                 >
               </li>
-              <li v-if="post.userId === user.id">
-                <a
-                  href="#"
-                  class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-5 h-5"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                    />
-                  </svg>
-
-                  Edit</a
-                >
+              <li v-if="user.id === posts.userId">
+                <EditPostModal
+                  @updated-post="
+                    (status) => {
+                      watchProp = status;
+                    }
+                  "
+                  :postId="posts.id"
+                  :user-id="user.id"
+                ></EditPostModal>
               </li>
-              <li v-if="post.userId === user.id">
+              <li v-if="user.id === posts.userId" @click="deletePost()">
                 <span
-                  @click="handlePostdelete(post.id)"
                   class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                   ><svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -209,23 +190,20 @@ await newfeed();
         </div>
       </div>
 
-      <span class="text-[13px] -mt-5 text-gray-500">{{
-        post.createdDate
-      }}</span>
       <!-- user name ends -->
       <!-- content starts here -->
-      <div @click="viewPost(post.id)" class="flex flex-col w-full">
+      <div class="flex flex-col">
         <div class="max-w-[300px]">
           <p class="dark:text-gray-300 max-w-[350px] break-words">
             {{
-              post.hashTags.length === 0
-                ? post.content
-                : post.content.replace(/#(\w+)/g, "")
+              posts.hashTags.length === 0
+                ? posts.content
+                : posts.content.replace(/#(\w+)/g, "")
             }}
           </p>
         </div>
         <a
-          v-for="hashTag in post.hashTags"
+          v-for="hashTag in posts.hashTags"
           :key="hashTag.id"
           class="text-blue-500"
           >#{{ hashTag.name }}</a
@@ -235,33 +213,44 @@ await newfeed();
       <!-- images start here -->
       <div class="grid grid-cols-2 w-full gap-2 rounded-2xl overflow-hidden">
         <div
-          v-for="image in post.media"
-          :class="[post.media.length == 1 ? 'col-span-2' : 'col-span-1']"
+          v-for="image in posts.media"
+          :class="[posts.media.length == 1 ? 'col-span-2' : 'col-span-1']"
         >
           <img
             :src="'http://localhost:8000/postImages/' + image"
             :class="[
-              post.media.length == 1
-                ? ' rounded-2xl  object-cover'
-                : ' rounded-2xl mobile:h-[350px] object-cover aspect-square',
+              posts.media.length == 1
+                ? ' w-full rounded-2xl  object-cover'
+                : ' w-full rounded-2xl object-cover aspect-square',
             ]"
             alt=""
           />
         </div>
       </div>
       <!-- images end here -->
-
+      <div class="">
+        <span class="-mt-5 text-gray-500">{{ posts.createdDate }}</span>
+      </div>
       <!-- reaction button starts here -->
-      <div class="w-full">
+      <div
+        class="w-full border-y-[1px] border-y-slate-200 dark:border-y-gray-500 py-3"
+      >
         <PostReaction
-          :post-id="post.id"
+          :post-id="posts.id"
           :user-id="user.id"
-          :comment-count="post.comments"
-          :reaction-count="post.reactions"
-          :react-status="post.reactStatus"
+          :comment-count="posts.comments"
+          :reaction-count="posts.reactions"
+          :react-status="posts.reactStatus"
         ></PostReaction>
       </div>
       <!-- reaction button ends here -->
+      <div class="w-full">
+        <Comment
+          :post-id="posts.id"
+          :user-id="posts.userId"
+          :comments="posts.commentDetails"
+        ></Comment>
+      </div>
     </div>
   </div>
 </template>
