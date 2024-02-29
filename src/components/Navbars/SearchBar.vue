@@ -1,5 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+const route = useRoute();
+const emits = defineEmits(["reloadResults"])
 const searchQuery = ref("");
 const buttonStatus = ref(false);
 function dismissButton() {
@@ -12,13 +16,22 @@ function clearQuery() {
   buttonStatus.value = false;
 }
 
-function handleSearch() {
-  alert("hello");
-}
+const handleSearch = () => {
+  router.push({
+    name: "searchView",
+    query: { searchQuery: searchQuery.value },
+  });
+  emits("reloadResults");
+};
+onMounted(() => {
+  if (route.query.searchQuery) {
+    searchQuery.value = route.query.searchQuery;
+  }
+});
 </script>
 <template>
   <div class="py-2 flex items-center relative">
-    <form @submit.prevent="handleSearch">
+    <form @submit.prevent="handleSearch" class="relative w-full">
       <label for="search" class="absolute top-1/2 -translate-y-1/2 left-5"
         ><svg
           viewBox="0 0 24 24"
@@ -41,7 +54,7 @@ function handleSearch() {
       />
       <span
         v-if="buttonStatus"
-        class="p-1 bg-blue-400 rounded-full absolute right-16 top-1/2 -translate-y-1/2"
+        class="p-1 bg-blue-400 rounded-full absolute right-2 top-1/2 -translate-y-1/2"
         ><svg
           @click="clearQuery"
           viewBox="0 0 15 15"

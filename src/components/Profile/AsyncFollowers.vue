@@ -2,15 +2,15 @@
 import { ref, onMounted } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import axios from "axios";
-import FollowButton from "../Profile/FollowButton.vue";
 import { useRouter } from "vue-router";
-const router = useRouter();
+import FollowButton from "./FollowButton.vue";
 const userStore = useAuthStore();
 const users = ref([]);
-const authUser = ref([]);
+const router = useRouter();
 const userLists = ref([]);
+const authUser = ref([]);
 
-onMounted(async () => {
+const getFollowers = async () => {
   let token = localStorage.getItem("token");
   const header = {
     Authorization: `Bearer ${token}`,
@@ -24,19 +24,19 @@ onMounted(async () => {
   authUser.value = userStore.getAuthUser;
   let id = authUser.value.id;
   userLists.value = users.value.filter((user) => {
-    return user.id != id && user.isFollowed === false;
+    return user.id != id;
   });
-});
+};
+await getFollowers();
 </script>
 <template>
   <div
-    class="flex flex-col gap-1 pt-2 overflow-hidden rounded-xl bg-gray-100 duration-300 dark:bg-slate-900 dark:text-gray-200"
+    class="flex flex-col min-h-screen gap-1 pt-2 overflow-hidden rounded-xl duration-300 dark:bg-slate-900 dark:text-gray-200"
   >
-    <h3 class="text-lg px-3 font-bold">Who to follow</h3>
     <div
-      v-for="user in userLists.slice(0, 3)"
+      v-for="user in userLists"
       :key="user.id"
-      class="flex item-center gap-2 px-3 py-2 rounded-2xl duration-300 hover:bg-gray-200 dark:hover:bg-slate-800"
+      class="flex item-center gap-2 px-4 py-2 rounded-2xl duration-300 hover:bg-gray-200 dark:hover:bg-slate-800"
     >
       <div class="shrink-0">
         <img
@@ -45,20 +45,22 @@ onMounted(async () => {
         />
       </div>
       <div class="flex flex-col">
-        <h3 @click="router.push({name:'userView',params:{userId:user.id}})" class="font-bold">{{ user.name }}</h3>
+        <h3
+          @click="
+            router.push({ name: 'userView', params: { userId: user.id } })
+          "
+          class="font-bold"
+        >
+          {{ user.name }}
+        </h3>
         <span class="text-gray-500">@{{ user.nickName }}</span>
       </div>
       <div class="ml-auto">
         <FollowButton
-          :user-id="user.id"
           :follow-status="user.isFollowed"
+          :user-id="user.id"
         ></FollowButton>
       </div>
     </div>
-    <router-link :to="{name : 'followerPage'}"
-      class="px-3 py-2 duration-300 hover:bg-gray-200 dark:hover:bg-slate-700 h-full"
-    >
-      <button  class="w-full text-start text-blue-500">Show more</button>
-    </router-link>
   </div>
 </template>

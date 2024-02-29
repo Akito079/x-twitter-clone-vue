@@ -1,14 +1,12 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { initFlowbite } from "flowbite";
 import { useAuthStore } from "@/stores/auth";
-import axios from "axios";
 import { useRouter } from "vue-router";
 import { usePostStore } from "@/stores/posts";
+import { initPopovers } from "flowbite";
 const router = useRouter();
 const authStore = useAuthStore();
 const postStore = usePostStore();
-const avatar = ref("");
 const user = ref([]);
 const handleLogout = async () => {
   try {
@@ -22,9 +20,9 @@ const handleLogout = async () => {
 };
 
 onMounted(async () => {
+  initPopovers();
   await authStore.authUser();
   user.value = authStore.getAuthUser;
-  avatar.value = `http://localhost:8000/profileImages/${user.value.profileImage}`;
 });
 </script>
 <template>
@@ -36,7 +34,11 @@ onMounted(async () => {
     class="flex items-center gap-1 my-5 duration-300 hover:bg-gray-300 dark:hover:bg-slate-800 xl:px-4 xl:py-2 rounded-full"
   >
     <div class="flex items-center shrink-0">
-      <img :src="avatar" class="rounded-full object-cover w-10 h-10" alt="" />
+      <img
+        :src="'http://localhost:8000/profileImages/' + user.profileImage"
+        class="rounded-full object-cover w-10 h-10"
+        alt=""
+      />
     </div>
     <div class="hidden xl:flex flex-col">
       <span>{{ user.name }}</span>
@@ -57,9 +59,9 @@ onMounted(async () => {
     class="absolute z-10 invisible inline-block w-[200px] text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800"
   >
     <div class="flex flex-col items-start">
-      <button class="font-bold text-black dark:text-gray-300 p-4">
-        Add an existing account
-      </button>
+      <router-link to="/account" class="font-bold text-black dark:text-gray-300 p-4">
+        Account Setting
+      </router-link>
       <button
         @click="handleLogout"
         class="font-bold text-black dark:text-gray-300 p-4"

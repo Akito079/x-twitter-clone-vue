@@ -1,5 +1,7 @@
 <script setup>
-import Theme from '../Theme.vue';
+import Theme from "../Theme.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 </script>
 <template>
   <div
@@ -11,11 +13,12 @@ import Theme from '../Theme.vue';
       >
         For you
       </div>
-      <div
+      <router-link
+        :to="{ name: 'followerPage' }"
         class="col-span-2 duration-300 text-center px-10 py-3 hover:bg-slate-900/10 dark:hover:bg-slate-700"
       >
-        Following
-      </div>
+        Connect to
+      </router-link>
       <div class="col-span-1 flex items-center justify-center">
         <Theme />
       </div>

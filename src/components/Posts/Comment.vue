@@ -3,7 +3,8 @@ import { ref, onMounted, reactive, watch } from "vue";
 import axios from "axios";
 import { usePostStore } from "@/stores/posts";
 import { useAuthStore } from "@/stores/auth";
-const emits = defineEmits(["reloadComment"]);
+import CommentEdit from "./CommentEdit.vue";
+import { initDropdowns, Dropdown } from "flowbite";
 const props = defineProps([
   "comments",
   "userName",
@@ -11,20 +12,32 @@ const props = defineProps([
   "userId",
   "postId",
 ]);
+const emits = defineEmits(["reloadComments"]);
 const postStore = usePostStore();
 const userStore = useAuthStore();
+const loadingStatus = ref(false);
 const posts = ref([]);
 const users = ref([]);
 const avatar = ref("");
 const comments = ref([]);
 const watchComment = ref(false);
+const dropdownStatus = ref(false);
 const form = reactive({
   commentContent: "",
   userId: "",
   postId: "",
 });
 
+const handleDropdown = (commentId, menuId) => {
+  dropdownStatus.value = !dropdownStatus.value;
+  const $targetEl = document.getElementById(menuId);
+  const $triggerEl = document.getElementById(commentId);
+  const dropdown = new Dropdown($targetEl, $triggerEl);
+  dropdown.toggle();
+};
+
 const handleStoreComment = async () => {
+  loadingStatus.value = true;
   const token = localStorage.getItem("token");
   const header = {
     Authorization: `Bearer ${token}`,
@@ -34,12 +47,16 @@ const handleStoreComment = async () => {
     headers: header,
   });
   form.commentContent = "";
+  loadingStatus.value = false;
+  watchComment.value = !watchComment.value;
+  emits("reloadComments");
 };
 
 watch(watchComment, async () => {
   await postStore.getPostDetail(props.postId);
   posts.value = postStore.getPosts;
   comments.value = posts.value.commentDetails;
+  emits("reloadComments");
 });
 
 onMounted(async () => {
@@ -69,9 +86,28 @@ onMounted(async () => {
 
       <div class="">
         <button
+          :disabled="form.commentContent === ''"
           type="submit"
           class="flex items-center px-5 py-2 disabled:bg-blue-200 text-white bg-blue-600 dark:disabled:bg-blue-600 dark:disabled:contrast-50 rounded-full"
         >
+          <svg
+            v-if="loadingStatus"
+            aria-hidden="true"
+            role="status"
+            class="inline w-4 h-4 me-3 text-gray-200 animate-spin dark:text-gray-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="#1C64F2"
+            />
+          </svg>
           Reply
         </button>
       </div>
@@ -81,7 +117,7 @@ onMounted(async () => {
     <div
       v-for="comment in comments"
       :key="comment.id"
-      class="flex gap-3 py-2 w-full border-y-[1px] border-y-slate-900/5 dark:border-y-[1px] dark:border-y-gray-700"
+      class="flex items-center gap-3 py-2 w-full border-y-[1px] border-y-slate-900/5 dark:border-y-[1px] dark:border-y-gray-700"
     >
       <!-- avatar starts -->
       <div class="shrink-0">
@@ -97,116 +133,20 @@ onMounted(async () => {
         <div class="flex items-center gap-1 w-full">
           <h3 class="font-bold dark:text-white">{{ comment.userName }}</h3>
           <span class="text-gray-500">@{{ comment.nickName }}</span>
-          <!-- drop down -->
+          <!-- comment drop down -->
           <div class="ml-auto">
-            <button
-              class="dropdownDefaultButton hover:bg-blue-200 focus:outline-none font-medium rounded-full p-2 text-center inline-flex items-center dark:hover:bg-blue-700"
-              type="button"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6 text-black dark:text-white"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                />
-              </svg>
-            </button>
-
-            <!-- Dropdown menu -->
-            <div
-              class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-slate-800"
-            >
-              <ul class="py-2 text-gray-700 dark:text-gray-200">
-                <li>
-                  <a
-                    class="flex items-center font-bold gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    ><svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      class="w-5 h-5 dark:fill-white"
-                    >
-                      <g>
-                        <path
-                          d="M10 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM6 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4zm12.586 3l-2.043-2.04 1.414-1.42L20 7.59l2.043-2.05 1.414 1.42L21.414 9l2.043 2.04-1.414 1.42L20 10.41l-2.043 2.05-1.414-1.42L18.586 9zM3.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C13.318 13.65 11.838 13 10 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C5.627 11.85 7.648 11 10 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H1.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46z"
-                        ></path>
-                      </g></svg
-                    >unfollow user</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    ><svg
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      class="w-5 h-5 dark:fill-white"
-                    >
-                      <g>
-                        <path
-                          d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z"
-                        ></path>
-                      </g>
-                    </svg>
-                    View post engagement</a
-                  >
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-5 h-5"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                      />
-                    </svg>
-
-                    Edit</a
-                  >
-                </li>
-                <li>
-                  <span
-                    class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                    ><svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-5 h-5"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                      />
-                    </svg>
-                    Delete</span
-                  >
-                </li>
-              </ul>
-            </div>
+            <CommentEdit
+              @update-comments="
+                () => {
+                  watchComment = !watchComment;
+                }
+              "
+              :user-comment="comment"
+              v-if="comment.userId === users.id"
+            ></CommentEdit>
           </div>
         </div>
-        <span class="-mt-[10px] text-[13px] text-gray-500">{{
-          comment.createdDate
-        }}</span>
+        <span class="text-[13px] text-gray-500">{{ comment.createdDate }}</span>
         <!-- user name ends -->
         <!-- content starts here -->
         <div class="flex flex-col w-full">

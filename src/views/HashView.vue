@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import LeftSideBar from "@/components/Navbars/LeftSideBar.vue";
 import RightSideBar from "@/components/Navbars/RightSideBar.vue";
 import FooterNav from "@/components/Navbars/FooterNav.vue";
-import PostDetail from "@/components/Posts/PostDetail.vue";
+import HashPosts from "@/components/Hashtags/HashPosts.vue";
 import { initFlowbite } from "flowbite";
 const route = useRoute();
 const router = useRouter();
@@ -61,19 +61,17 @@ onMounted(() => {
                 ></path>
               </g></svg
           ></span>
-          <h3 class="font-bold text-lg p-1">Post</h3>
+          <h3 class="font-bold text-lg p-1">#{{ route.params.hashName }}</h3>
         </div>
       </div>
-      <!-- posts start here -->
-      <PostDetail :post-id="route.params.postId"></PostDetail>
+      <!-- HashPosts start here -->
+      <div class="min-h-screen">
+        <HashPosts></HashPosts>
+      </div>
     </div>
 
     <!-- right side bar -->
-    <RightSideBar
-      :search-status="true"
-      :trend-status="true"
-      :folllow-status="true"
-    ></RightSideBar>
+    <RightSideBar :search-status="true" :folllow-status="true"></RightSideBar>
 
     <!-- footer nav -->
     <div

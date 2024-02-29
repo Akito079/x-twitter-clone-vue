@@ -53,9 +53,7 @@ const handleLogin = async () => {
   if (result) {
     try {
       await authStore.signIn(form.value);
-      const modalElement = document.querySelector("#sign-in-modal");
-      const modal = new Modal(modalElement);
-      modal.hide();
+      closeModal();
       router.push("/");
     } catch (error) {
       serverMessages.value = error.response.data.message;
@@ -64,12 +62,24 @@ const handleLogin = async () => {
   }
 };
 
+const openModal = () => {
+    const modalElement = document.querySelector("#sign-in-modal");
+    const modal = new Modal(modalElement);
+    modal.show();
+  };
+
+  const closeModal = () => {
+    const modalElement = document.querySelector("#sign-in-modal");
+    const modal = new Modal(modalElement);
+    modal.hide();
+  };
 
 </script>
 <template>
   <!-- modal button -->
   <div class="">
     <button
+      @click="openModal"
       data-modal-target="sign-in-modal"
       data-modal-toggle="sign-in-modal"
       class="w-[200px] px-10 hover:bg-blue-300 duration-300 py-2 ring-1 ring-blue-400 text-blue-500 rounded-full"
@@ -89,6 +99,7 @@ const handleLogin = async () => {
         <!-- Modal content -->
         <div class="relative bg-white rounded-lg shadow dark:bg-slate-900">
           <button
+            @click="closeModal"
             type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-full text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide="sign-in-modal"

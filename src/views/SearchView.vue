@@ -1,16 +1,18 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import LeftSideBar from "@/components/Navbars/LeftSideBar.vue";
 import RightSideBar from "@/components/Navbars/RightSideBar.vue";
 import NavBar from "@/components/Navbars/NavBar.vue";
 import FooterNav from "@/components/Navbars/FooterNav.vue";
-import PostHeader from "@/components/Posts/PostHeader.vue";
-import Posts from "@/components/Posts/Posts.vue";
+import SearchBar from "@/components/Navbars/SearchBar.vue";
 import PostButton from "@/components/Posts/PostButton.vue";
+import SearchResults from "@/components/Search/SearchResults.vue";
 import { initDrawers } from "flowbite";
 //mobile responsive effects
 const position = ref("");
 const contrast = ref("");
+const route = useRoute();
 let preScrollPos = window.scrollY;
 window.onscroll = function () {
   let currentScrollPos = window.scrollY;
@@ -23,23 +25,15 @@ window.onscroll = function () {
   }
   preScrollPos = currentScrollPos;
 };
-onMounted(() => initDrawers());
+onMounted(() => {
+  initDrawers();
+});
 </script>
 <template>
   <!-- main wrapper for all content -->
   <section
     class="flex flex-col mobile:flex-row mobile:justify-center dark:bg-[#191919]"
   >
-    <!-- mobile size navbar starts here -->
-    <div
-      id="navbar"
-      class="mobile:hidden duration-300 backdrop-blur-lg sticky w-full"
-      :class="position"
-    >
-      <NavBar></NavBar>
-    </div>
-    <!-- mobile size nabar ends here -->
-
     <!-- Mobile size post btn -->
     <div class="mobile:hidden fixed bottom-20 right-5" :class="contrast">
       <PostButton />
@@ -51,17 +45,12 @@ onMounted(() => initDrawers());
 
     <!-- new feed starts here  -->
     <div class="w-full mobile:w-[750px] min-h-screen">
-      <PostHeader></PostHeader>
-      <!-- posts start here -->
-      <Posts />
+      <!-- Search Results start here -->
+      <SearchResults></SearchResults>
     </div>
 
     <!-- right side bar -->
-    <RightSideBar
-      :search-status="true"
-      :trend-status="true"
-      :folllow-status="true"
-    ></RightSideBar>
+    <RightSideBar :trend-status="true" :folllow-status="true"></RightSideBar>
 
     <!-- footer nav -->
     <div

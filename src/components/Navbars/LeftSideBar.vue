@@ -6,7 +6,7 @@ import ProfilePop from "../Popover/ProfilePop.vue";
 <template>
   <!-- nav links wrrapper-->
   <div
-    class="hidden sticky top-0 mobile:flex h-screen border-r-[1px] border-slate-900/5 dark:border-r-gray-700 px-5 dark:text-gray-300"
+    class="hidden sticky top-0 mobile:flex h-screen border-r-[1px] border-slate-900/5 dark:border-r-gray-700 px-5 py-4 dark:text-gray-300"
   >
     <div class="inline-flex flex-col items-start justify-start gap-2">
       <Logo size="w-6 h-6" :hoverStatus="true" />

@@ -1,21 +1,55 @@
 <script setup>
-import { ref, onMounted, onUpdated, watch } from "vue";
-import { useRouter } from "vue-router";
-import PostReaction from "./PostReaction.vue";
-import { usePostStore } from "@/stores/posts";
-import { Dropdown } from "flowbite";
+import { ref, onMounted, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
-const posts = ref([]);
+import { usePostStore } from "@/stores/posts";
+import { useRouter } from "vue-router";
+import ProfileEdit from "./ProfileEdit.vue";
+import axios from "axios";
+import PostReaction from "../Posts/PostReaction.vue";
+const loadingStatus = ref(false);
 const user = ref([]);
+const posts = ref([]);
+const dropdownStatus = ref(false);
+const userStore = useAuthStore();
+const postStore = usePostStore();
 const router = useRouter();
 const watchProp = ref(false);
-const postStore = usePostStore();
-const userStore = useAuthStore();
-const dropdownStatus = ref(false);
-const props = defineProps({ reloadPosts: Boolean });
-const emits = defineEmits(["changeUpdateStatus"]);
+const emits = defineEmits(["reloadProfile"]);
+const viewPost = (postId) => {
+  router.push({
+    name: "postDetail",
+    params: { postId: postId },
+  });
+};
 
-// create custom dropdown
+const handleReloadProfile = () => {
+  watchProp.value = !watchProp.value;
+};
+const handlePostdelete = async (postId) => {
+  await postStore.postDestroy(postId);
+  watchProp.value = !watchProp.value;
+  emits("reloadProfile");
+};
+
+const profilePosts = async () => {
+  let token = localStorage.getItem("token");
+  let header = {
+    Authorization: `Bearer ${token}`,
+  };
+  await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+  const response = await axios.get(
+    `http://localhost:8000/api/posts?userId[eq]=${user.value.id}`,
+    { headers: header }
+  );
+  posts.value = response.data.data;
+};
+
+watch(watchProp, async () => {
+  await userStore.authUser();
+  user.value = userStore.getAuthUser;
+  await profilePosts();
+});
+
 const handleDropdown = (postId, menuId) => {
   dropdownStatus.value = !dropdownStatus.value;
   const $targetEl = document.getElementById(menuId);
@@ -28,56 +62,37 @@ const handleDropdown = (postId, menuId) => {
   }
 };
 
-// show posts from server asynchronously
-const newfeed = async () => {
-  await postStore.postsIndex();
-  posts.value = postStore.getPosts;
-};
-
-// after creating new posts the new posts will be shown on the page without reload
-const handleNewpostEvent = async () => {
-  if (watchProp.value === true) {
-    await postStore.postsIndex();
-    posts.value = postStore.getPosts;
-    emits("changeUpdateStatus", false);
-  }
-};
-
-//delete posts
-const handlePostdelete = async (postId) => {
-  await postStore.postDestroy(postId);
-  watchProp.value = true;
-};
-
-const viewPost = (postId) => {
-  router.push({
-    name: "postDetail",
-    params: { postId: postId },
-  });
-};
-
 onMounted(async () => {
+  loadingStatus.value = true;
   await userStore.authUser();
   user.value = userStore.getAuthUser;
+  await profilePosts();
+  loadingStatus.value = false;
 });
-
-onUpdated(() => {
-  watchProp.value = props.reloadPosts;
-});
-
-watch(
-  watchProp,
-  async () => {
-    await handleNewpostEvent();
-  },
-  { immediate: true }
-);
-
-await newfeed();
 </script>
 <template>
+  <div class="flex items-center justify-between p-4">
+    <div class="">
+      <img
+        :src="'http://localhost:8000/profileImages/' + user.profileImage"
+        class="w-32 h-32 rounded-full object-cover"
+        alt=""
+      />
+    </div>
+    <ProfileEdit @reload-profile="handleReloadProfile"></ProfileEdit>
+  </div>
   <div
-    v-if="posts.length != 0"
+    class="flex flex-col p-4 border-b-[1px] border-b-slate-900/5 dark:border-b-gray-600"
+  >
+    <h3 class="text-lg font-bold dark:text-gray-300">{{ user.name }}</h3>
+    <span class="dark:text-gray-300">@{{ user.nickName }}</span>
+    <span class="dark:text-gray-300"
+      ><h3 class="font-bold inline-block">{{ user.followers }}</h3>
+      followers</span
+    >
+  </div>
+  <div
+    v-if="posts.length != 0 && !loadingStatus"
     v-for="post in posts"
     :key="post.id"
     class="flex gap-3 py-3 px-3 mobile:px-8 hover:bg-gray-100 border-[1px] border-slate-900/5 dark:border-[1px] dark:border-gray-700 dark:hover:bg-slate-900 duration-300"
@@ -160,9 +175,9 @@ await newfeed();
                 >
               </li>
               <li v-if="post.userId === user.id">
-                <a
-                  href="#"
-                  class="flex items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                <button
+                  @click="viewPost(post.id)"
+                  class="flex w-full items-center gap-2 font-bold px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -179,8 +194,8 @@ await newfeed();
                     />
                   </svg>
 
-                  Edit</a
-                >
+                  Edit
+                </button>
               </li>
               <li v-if="post.userId === user.id">
                 <span
@@ -215,7 +230,7 @@ await newfeed();
       <!-- user name ends -->
       <!-- content starts here -->
       <div @click="viewPost(post.id)" class="flex flex-col w-full">
-        <div class="max-w-[300px]">
+        <div class="">
           <p class="dark:text-gray-300 max-w-[350px] break-words">
             {{
               post.hashTags.length === 0
@@ -263,5 +278,46 @@ await newfeed();
       </div>
       <!-- reaction button ends here -->
     </div>
+  </div>
+  <div v-if="loadingStatus" role="status" class="h-screen">
+    <svg
+      aria-hidden="true"
+      class="w-8 h-8 mx-auto my-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+      viewBox="0 0 100 101"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+        fill="currentColor"
+      />
+      <path
+        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+        fill="currentFill"
+      />
+    </svg>
+    <span class="sr-only">Loading...</span>
+  </div>
+  <div v-if="posts.length === 0 && !loadingStatus" class="min-h-screen my-5">
+    <h1
+      class="font-medium flex items-center justify-center gap-1 w-full text-gray-600 dark:text-gray-400 text-lg font-open-san"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+        />
+      </svg>
+
+      No Posts...
+    </h1>
   </div>
 </template>

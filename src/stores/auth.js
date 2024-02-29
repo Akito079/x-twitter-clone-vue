@@ -34,6 +34,7 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = "";
   }
 
+  // get auth user
   async function authUser() {
     token.value = localStorage.getItem('token');
     await axios.get("http://localhost:8000/sanctum/csrf-cookie");
@@ -46,6 +47,44 @@ export const useAuthStore = defineStore("auth", () => {
     user.value = response.data.data;
   }
 
+  // show specific user
+  async function showUser(userId){
+    token.value = localStorage.getItem('token');
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    const header = {
+      Authorization: `Bearer ${token.value}`,
+    };
+    const response = await axios.get(`http://localhost:8000/api/users/${userId}`, {
+      headers: header,
+    });
+    user.value = response.data.data;
+  }
+
+
+  // update user profile
+  async function profileEdit(payload){
+    token.value = localStorage.getItem('token');
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    const header = {
+      Authorization: `Bearer ${token.value}`,
+      "Content-Type" : "multipart/form-data",
+    };
+
+    await axios.post("http://localhost:8000/api/profile",payload,{headers:header})
+  }
+  
+  // get all users
+  async function users(){
+    token.value = localStorage.getItem('token');
+    await axios.get("http://localhost:8000/sanctum/csrf-cookie");
+    const header = {
+      Authorization: `Bearer ${token.value}`,
+    };
+    const response = await axios.get("http://localhost:8000/api/users",{headers:header});
+    user.value = response.data.data;
+  }
+
+
   const getAuthUser = computed(() => user.value);
-  return { user, authUser, signIn, signOut, signUp, getAuthUser };
+  return { user, authUser, signIn, signOut, signUp, getAuthUser,users,profileEdit,showUser };
 });

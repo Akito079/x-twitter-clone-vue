@@ -1,13 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import LeftSideBar from "@/components/Navbars/LeftSideBar.vue";
 import RightSideBar from "@/components/Navbars/RightSideBar.vue";
 import FooterNav from "@/components/Navbars/FooterNav.vue";
-import PostDetail from "@/components/Posts/PostDetail.vue";
-import { initFlowbite } from "flowbite";
-const route = useRoute();
+import UserShow from "@/components/Users/UserShow.vue";
+import { useAuthStore } from "@/stores/auth";
+const userStore = useAuthStore();
 const router = useRouter();
+const route = useRoute();
+const user = ref([]);
 //mobile responsive effects
 const position = ref("");
 const contrast = ref("");
@@ -23,8 +25,9 @@ window.onscroll = function () {
   }
   preScrollPos = currentScrollPos;
 };
-onMounted(() => {
-  initFlowbite();
+onMounted(async () => {
+  await userStore.showUser(route.params.userId);
+  user.value = userStore.user;
 });
 </script>
 <template>
@@ -61,26 +64,25 @@ onMounted(() => {
                 ></path>
               </g></svg
           ></span>
-          <h3 class="font-bold text-lg p-1">Post</h3>
+          <div class="flex flex-col">
+            <h3 class="font-bold text-lg">{{ user.name }}</h3>
+            <span class="font-medium">{{ user.posts }} posts</span>
+          </div>
         </div>
       </div>
-      <!-- posts start here -->
-      <PostDetail :post-id="route.params.postId"></PostDetail>
+      <!-- user show start here -->
+      <div class=" min-h-screen">
+        <UserShow></UserShow>
+      </div>
     </div>
 
     <!-- right side bar -->
-    <RightSideBar
-      :search-status="true"
-      :trend-status="true"
-      :folllow-status="true"
-    ></RightSideBar>
+    <RightSideBar :search-status="true" :trend-status="true"></RightSideBar>
 
     <!-- footer nav -->
     <div
-      :class="[
-        'mobile:hidden sticky bottom-0 flex justify-between px-5 py-2 bg-white duration-300 dark:bg-black ring-1 ring-slate-900/5 dark:ring-gray-500 items-center col-span-6 w-full',
-        contrast,
-      ]"
+      class="mobile:hidden sticky bottom-0 flex justify-between px-5 py-2 bg-white duration-300 dark:bg-black ring-1 ring-slate-900/5 dark:ring-gray-500 items-center col-span-6 w-full"
+      :class="contrast"
     >
       <FooterNav />
     </div>
